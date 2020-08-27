@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Log;
 
 class MineSweeperController extends Controller
 {
+    public function index(){
+        return view('minesweeper.index');
+    }
+    
     public function initializeBoard(Request $request){
         $rows = $request->rows;
         $cols = $request->cols;
