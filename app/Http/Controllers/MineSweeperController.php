@@ -22,7 +22,6 @@ class MineSweeperController extends Controller
                 //to be 90% of total cells (Very Hard Level) 
                 //[Not in the rules, but it makes the game "playable"]
                 $mines = min($mines, (int)(($rows*$cols) * 0.9) );
-                Log::debug("'$rows, $cols, $mines'");
                 $mainBoard = $this->setMines($rows, $cols, $mines);
                 for($iRow = 0; $iRow < $rows; $iRow++ ){
                     for ($iCol = 0; $iCol < $cols; $iCol++){
