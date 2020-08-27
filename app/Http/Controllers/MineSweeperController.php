@@ -25,7 +25,7 @@ class MineSweeperController extends Controller
                 $mainBoard = $this->setMines($rows, $cols, $mines);
                 for($iRow = 0; $iRow < $rows; $iRow++ ){
                     for ($iCol = 0; $iCol < $cols; $iCol++){
-                        $visibleBoard[$iRow][$iCol] = false;
+                        $visibleBoard[$iRow][$iCol] = 0;
                     }
                 }
             }

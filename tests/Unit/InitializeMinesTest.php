@@ -20,5 +20,6 @@ class InitializeMinesTest extends TestCase
         $parameters = ['rows'=>10, 'cols'=>10, 'mines'=>10 ];
         $response = $this->post('/api/start', $parameters);
         $response->assertStatus(200);
+        $response->assertJsonStructure(['main', 'visible']);   
     }
 }
