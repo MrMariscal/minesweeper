@@ -2012,38 +2012,96 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Sweeperboard',
   props: ['mainBoard', 'visibleBoard', 'rows', 'cols'],
   data: function data() {
     return {
       mBoard: null,
-      vBoard: null
+      vBoard: null,
+      sBoard: new Array(this.rows),
+      winner: 0,
+      looser: 0,
+      count: 0
     };
   },
   created: function created() {
     this.mBoard = this.mainBoard;
     this.vBoard = this.visibleBoard;
+
+    for (var c = 0; c < this.cols; c++) {
+      this.sBoard[c] = new Array(this.cols);
+    }
+
+    for (var r = 0; r < this.rows; r++) {
+      for (var _c = 0; _c < this.cols; _c++) {
+        this.sBoard[r][_c] = ' ';
+      }
+    }
+
+    console.log(this.sBoard);
   },
   methods: {
     clickCell: function clickCell(row, col) {
       var _this = this;
 
-      var parameters = {
-        mainBoard: this.mBoard,
-        visibleBoard: this.vBoard,
-        rows: this.rows,
-        cols: this.cols,
-        row: row,
-        col: col
-      };
-      axios.post('/api/click', parameters).then(function (response) {
-        _this.mBoard = response.data.main;
-        _this.vBoard = response.data.visible;
-      })["catch"]();
+      if (this.mBoard[row][col] == '9') {
+        this.looser = 1;
+      } else {
+        var parameters = {
+          mainBoard: this.mBoard,
+          visibleBoard: this.vBoard,
+          rows: this.rows,
+          cols: this.cols,
+          row: row,
+          col: col
+        };
+        axios.post('/api/click', parameters).then(function (response) {
+          _this.mBoard = response.data.main;
+          _this.vBoard = response.data.visible;
+
+          if (response.data.uncovers == _this.rows * _this.cols) {
+            _this.winner = 1;
+          }
+
+          ;
+        });
+      }
     },
-    toggle: function toggle() {
-      alert('');
+    toggle: function toggle(brow, bcol) {
+      console.log(brow + ', ' + bcol + ', ' + this.vBoard[brow][bcol]);
+      console.log(this.sBoard[brow][bcol]);
+
+      if (this.vBoard[brow][bcol] != 1) {
+        switch (this.vBoard[brow][bcol]) {
+          case 0:
+            //Question
+            this.vBoard[brow][bcol] = 2;
+            this.sBoard[brow][bcol] = '?';
+            break;
+
+          case 2:
+            //Bomb
+            this.vBoard[brow][bcol] = 3;
+            break;
+
+          case 3:
+            //No mark
+            this.vBoard[brow][bcol] = 0;
+            this.sBoard[brow][bcol] = ' ';
+            break;
+        }
+      }
+
+      this.count++;
     }
   }
 });
@@ -37812,57 +37870,127 @@ var render = function() {
   return _c(
     "div",
     { staticClass: "card", attrs: { id: "board" } },
-    _vm._l(_vm.mBoard, function(row, rIndex) {
-      return _c("div", { key: rIndex, staticClass: "card-body" }, [
-        _c(
-          "div",
-          { staticClass: "row" },
-          _vm._l(row, function(col, cIndex) {
-            return _c("div", { key: cIndex, staticClass: "col" }, [
-              _vm.vBoard[rIndex][cIndex] == 1
-                ? _c(
-                    "a",
-                    { staticClass: "btn btn-success", attrs: { href: "#" } },
-                    [_vm._v(_vm._s(_vm.mBoard[rIndex][cIndex]))]
-                  )
-                : _vm.mBoard[rIndex][cIndex] == 9
-                ? _c(
-                    "a",
-                    { staticClass: "btn btn-danger", attrs: { href: "#" } },
-                    [_vm._v(_vm._s(_vm.mBoard[rIndex][cIndex]))]
-                  )
-                : _c(
-                    "a",
-                    {
-                      staticClass: "btn btn-info",
-                      attrs: { href: "#" },
-                      on: {
-                        contextmenu: function($event) {
-                          $event.preventDefault()
-                          return _vm.toggle($event)
-                        },
-                        click: function($event) {
-                          $event.preventDefault()
-                          return _vm.clickCell(rIndex, cIndex)
+    [
+      _vm.winner == 1
+        ? _c("div", { staticClass: "card-title" }, [
+            _c("h1", [_vm._v(" You Win")])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.looser == 1
+        ? _c("div", { staticClass: "card-title" }, [
+            _c("h1", [_vm._v("You Loose")])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm._l(_vm.mBoard, function(row, rIndex) {
+        return _c("div", { key: rIndex, staticClass: "card-body" }, [
+          _c(
+            "div",
+            { key: _vm.count, staticClass: "row" },
+            _vm._l(row, function(col, cIndex) {
+              return _c("div", { key: cIndex, staticClass: "col" }, [
+                _vm.vBoard[rIndex][cIndex] == 1
+                  ? _c(
+                      "a",
+                      { staticClass: "btn btn-success", attrs: { href: "#" } },
+                      [_vm._v(_vm._s(_vm.mBoard[rIndex][cIndex]))]
+                    )
+                  : _vm.vBoard[rIndex][cIndex] == 2
+                  ? _c(
+                      "a",
+                      {
+                        staticClass: "btn btn-success",
+                        attrs: { href: "#" },
+                        on: {
+                          contextmenu: function($event) {
+                            $event.preventDefault()
+                            return _vm.toggle(rIndex, cIndex)
+                          }
                         }
-                      }
-                    },
-                    [
-                      _vm._v(
-                        _vm._s(_vm.mBoard[rIndex][cIndex]) +
-                          ", " +
-                          _vm._s(_vm.vBoard[rIndex][cIndex]) +
-                          " "
-                      )
-                    ]
-                  )
-            ])
-          }),
-          0
-        )
-      ])
-    }),
-    0
+                      },
+                      [_vm._v("?")]
+                    )
+                  : _vm.vBoard[rIndex][cIndex] == 3
+                  ? _c(
+                      "a",
+                      {
+                        staticClass: "btn btn-success",
+                        attrs: { href: "#" },
+                        on: {
+                          contextmenu: function($event) {
+                            $event.preventDefault()
+                            return _vm.toggle(rIndex, cIndex)
+                          }
+                        }
+                      },
+                      [_vm._v("F")]
+                    )
+                  : _vm.mBoard[rIndex][cIndex] == 9
+                  ? _c("div", [
+                      _vm.winner == 1 || _vm.looser == 1
+                        ? _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-danger",
+                              attrs: { href: "#" }
+                            },
+                            [
+                              _c("i", { staticClass: "fas fa-bomb" }),
+                              _vm._v("B")
+                            ]
+                          )
+                        : _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-info",
+                              attrs: { href: "#" },
+                              on: {
+                                contextmenu: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.toggle(rIndex, cIndex)
+                                },
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.clickCell(rIndex, cIndex)
+                                }
+                              }
+                            },
+                            [_vm._v(" ")]
+                          )
+                    ])
+                  : _c(
+                      "a",
+                      {
+                        staticClass: "btn btn-info",
+                        attrs: { href: "#" },
+                        on: {
+                          contextmenu: function($event) {
+                            $event.preventDefault()
+                            return _vm.toggle(rIndex, cIndex)
+                          },
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.clickCell(rIndex, cIndex)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                     " +
+                            _vm._s(_vm.sBoard[rIndex][cIndex]) +
+                            "\n                "
+                        )
+                      ]
+                    )
+              ])
+            }),
+            0
+          )
+        ])
+      })
+    ],
+    2
   )
 }
 var staticRenderFns = []

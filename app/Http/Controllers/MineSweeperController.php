@@ -77,7 +77,8 @@ class MineSweeperController extends Controller
         $mainBoard = $request->mainBoard;
         $visibleBoard = $request->visibleBoard;
         $this->uncoverCells($mainBoard, $visibleBoard, $iRows, $iCols, $iRow, $iCol);
-        return ['main'=>$mainBoard, 'visible'=>$visibleBoard];
+        $uncovers = $this->countUncovers($mainBoard, $visibleBoard);
+        return ['main'=>$mainBoard, 'visible'=>$visibleBoard, 'uncovers'=>$uncovers];
     }
 
     private function uncoverCells( &$mainBoard, &$visibleBoard, $iRows, $iCols, $iRow, $iCol){
@@ -93,12 +94,19 @@ class MineSweeperController extends Controller
         }
     }
 
-    private function countBombs($mainBoard){
+    private function countUncovers($mainBoard, $visibleBoard){
         $iBombs = 0;
         foreach($mainBoard as $row){
             foreach( $row as $col){
                 if ($col == 9) {
                     $iBombs++;
+                }
+            }
+        }
+        foreach($visibleBoard as $row) {
+            foreach( $row as $col){
+                if ($col == 1){
+                    $iBombs ++;
                 }
             }
         }
