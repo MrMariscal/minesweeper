@@ -1,4 +1,4 @@
 @extends('layouts.minesweeper')
 @section('content')
-    Hello  
+    <minesweeper></minesweeper>
 @endsection
