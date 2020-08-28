@@ -72,16 +72,30 @@ class MineSweeperController extends Controller
     public function clickCell(Request $reques){
         $iRow = $request->row;
         $iCol = $request->col;
+        $iRows = $request->rows;
+        $iCols = $request->cols;
         $mainBoard = $request->mainBoard;
         $visibleBoard = $visibleBoard;
-
-
     }
+
+    private function uncoverCells( &$mainBoard, &$visibleBoard, $iRows, $iCols, $iRow, $iCol ){
+        $visibleBoard[$iRow][$iCol] = ($visibleBoard[$iRow][$iCol] == 0 ? 1 : $visibleBoard[$iRow][$iCol]);
+        if ( $visibleBoard[$iRow][$iCol] == 0  ){
+            for($iR = max(0, $iRow-1) ; $iR <= min($iRows, $iRow + 1); $iR++ ){
+                for($iC = max(0, $iCol-1) ; $iC <= min($iCols, $iCol + 1); $iC++ ){
+                    if($mainBoard[$iR][$iC] != 9 ){
+                        $this->uncoverCells($mainBoard, $visibleBoard, $iRows, $iCols, $iRow, $iCol);
+                    }
+                }
+            }
+        }
+    }
+
     private function countBombs($mainBoard){
         $iBombs = 0;
         foreach($mainBoard as $row){
-            forach( $row as $col){
-                if $col == 9 {
+            foreach( $row as $col){
+                if ($col == 9) {
                     $iBombs++;
                 }
             }

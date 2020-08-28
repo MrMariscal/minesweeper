@@ -24,8 +24,10 @@ export default {
             let parameters = {
                 mainBoard: this.mainBoard,
                 visibleBoard: this.visibleBoard,
-                rows: row,
-                cols: col,
+                rows: this.rows,
+                cols: this.cols,
+                row: row,
+                col: col,
             };
 
         },
