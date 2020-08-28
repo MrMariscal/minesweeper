@@ -10,7 +10,7 @@ class MineSweeperController extends Controller
     public function index(){
         return view('minesweeper.index');
     }
-    
+
     public function initializeBoard(Request $request){
         $rows = $request->rows;
         $cols = $request->cols;
@@ -37,7 +37,7 @@ class MineSweeperController extends Controller
         return response()->json(['main'=>$mainBoard, 'visible'=>$visibleBoard]);
     }
 
-    public function setMines($rows, $cols, $mines){
+    private function setMines($rows, $cols, $mines){
         $minesBoard = array();
         if ($mines > 0){
             $Bomb = 9;
@@ -67,5 +67,25 @@ class MineSweeperController extends Controller
             }
         }
         return $minesBoard;
+    }
+
+    public function clickCell(Request $reques){
+        $iRow = $request->row;
+        $iCol = $request->col;
+        $mainBoard = $request->mainBoard;
+        $visibleBoard = $visibleBoard;
+
+
+    }
+    private function countBombs($mainBoard){
+        $iBombs = 0;
+        foreach($mainBoard as $row){
+            forach( $row as $col){
+                if $col == 9 {
+                    $iBombs++;
+                }
+            }
+        }
+        return $iBombs;
     }
 }

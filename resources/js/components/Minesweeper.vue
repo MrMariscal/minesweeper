@@ -37,13 +37,9 @@
                 </div>
             </div>
         </div>
-        <div id="board" class="card">
-            <div class="card-body" v-for="(row, rIndex) in mainBoard">
-                <div class="row">
-                    <div class="col" v-for="(col, cIndex) in row">
-                        <a href="#" class="btn btn-success">{{rIndex}},{{cIndex}}</a>
-                    </div>
-                </div>
+        <div class="card" v-if="showBoard">
+            <div class="card-body">
+                <Sweeperboard :mainBoard="mainBoard" :visibleBoard="visibleBoard" :rows="parameters.rows" :cols="parameters.cols"></Sweeperboard>
             </div>
         </div>
     </div>
@@ -56,6 +52,7 @@ export default {
             setup: false, 
             mainBoard: null,
             visibleBoard: null,
+            showBoard: false,
             boardHtml: '',
             parameters: {
                 rows: 10,
@@ -70,42 +67,12 @@ export default {
                 response=>{
                     this.mainBoard = response.data.main;
                     this.visibleBoard = response.data.visible;
-                    this.showBoard();
+                    this.showBoard = true;
                 }
                 );
         },
-        showBoard(){
-            let html = '';
-            for( let r = 0 ; r < this.parameters.rows ; r++ ){
-                console.log(r);
-                console.log(html);
-                html = '<div class="row">';
-                for( let c = 0 ; c < this.parameters.cols ; c++ ){
-                    let char = '';
-                    switch (this.visibleBoard[r][c] == 0){
-                        case 0:
-                            char += '&nbsp';
-                            break;
-                        case 1:
-                            if( this.mainBoard[r][c] == 9){
-                                char += '<i class="fas fa-bomb"></i>'
-                            }
-                            else{
-                                char += this.mainBoard[r][c];
-                            }
-                            break;
-                        default:
-                            char += '&nbsp';
-                            break;
-                    }
-                    html += '<div class="col">';
-                    html += '<a href="#" class="btn btn-success" @click.prevent="">' + char + '</a>'
-                    html += '</div>';
-                }
-                html += '</div>';
-                this.boardHtml = html;
-            }
-            
+        clickCell(x,y){
+            alert(x + ',' + y);
         }
     }
 }
