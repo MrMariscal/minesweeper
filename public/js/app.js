@@ -2009,22 +2009,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Sweeperboard',
   props: ['mainBoard', 'visibleBoard', 'rows', 'cols'],
   data: function data() {
-    return {};
+    return {
+      mBoard: null,
+      vBoard: null
+    };
+  },
+  created: function created() {
+    this.mBoard = this.mainBoard;
+    this.vBoard = this.visibleBoard;
   },
   methods: {
     clickCell: function clickCell(row, col) {
+      var _this = this;
+
       var parameters = {
-        mainBoard: this.mainBoard,
-        visibleBoard: this.visibleBoard,
+        mainBoard: this.mBoard,
+        visibleBoard: this.vBoard,
         rows: this.rows,
         cols: this.cols,
         row: row,
         col: col
       };
+      axios.post('/api/click', parameters).then(function (response) {
+        _this.mBoard = response.data.main;
+        _this.vBoard = response.data.visible;
+      })["catch"]();
+    },
+    toggle: function toggle() {
+      alert('');
     }
   }
 });
@@ -37793,27 +37812,50 @@ var render = function() {
   return _c(
     "div",
     { staticClass: "card", attrs: { id: "board" } },
-    _vm._l(_vm.mainBoard, function(row, rIndex) {
+    _vm._l(_vm.mBoard, function(row, rIndex) {
       return _c("div", { key: rIndex, staticClass: "card-body" }, [
         _c(
           "div",
           { staticClass: "row" },
           _vm._l(row, function(col, cIndex) {
             return _c("div", { key: cIndex, staticClass: "col" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-success",
-                  attrs: { href: "#" },
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      return _vm.clickCell(rIndex, cIndex)
-                    }
-                  }
-                },
-                [_vm._v(_vm._s(_vm.mainBoard[rIndex][cIndex]))]
-              )
+              _vm.vBoard[rIndex][cIndex] == 1
+                ? _c(
+                    "a",
+                    { staticClass: "btn btn-success", attrs: { href: "#" } },
+                    [_vm._v(_vm._s(_vm.mBoard[rIndex][cIndex]))]
+                  )
+                : _vm.mBoard[rIndex][cIndex] == 9
+                ? _c(
+                    "a",
+                    { staticClass: "btn btn-danger", attrs: { href: "#" } },
+                    [_vm._v(_vm._s(_vm.mBoard[rIndex][cIndex]))]
+                  )
+                : _c(
+                    "a",
+                    {
+                      staticClass: "btn btn-info",
+                      attrs: { href: "#" },
+                      on: {
+                        contextmenu: function($event) {
+                          $event.preventDefault()
+                          return _vm.toggle($event)
+                        },
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.clickCell(rIndex, cIndex)
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        _vm._s(_vm.mBoard[rIndex][cIndex]) +
+                          ", " +
+                          _vm._s(_vm.vBoard[rIndex][cIndex]) +
+                          " "
+                      )
+                    ]
+                  )
             ])
           }),
           0

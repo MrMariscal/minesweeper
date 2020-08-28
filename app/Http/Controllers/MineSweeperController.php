@@ -69,22 +69,24 @@ class MineSweeperController extends Controller
         return $minesBoard;
     }
 
-    public function clickCell(Request $reques){
+    public function clickCell(Request $request){
         $iRow = $request->row;
         $iCol = $request->col;
         $iRows = $request->rows;
         $iCols = $request->cols;
         $mainBoard = $request->mainBoard;
-        $visibleBoard = $visibleBoard;
+        $visibleBoard = $request->visibleBoard;
+        $this->uncoverCells($mainBoard, $visibleBoard, $iRows, $iCols, $iRow, $iCol);
+        return ['main'=>$mainBoard, 'visible'=>$visibleBoard];
     }
 
-    private function uncoverCells( &$mainBoard, &$visibleBoard, $iRows, $iCols, $iRow, $iCol ){
-        $visibleBoard[$iRow][$iCol] = ($visibleBoard[$iRow][$iCol] == 0 ? 1 : $visibleBoard[$iRow][$iCol]);
+    private function uncoverCells( &$mainBoard, &$visibleBoard, $iRows, $iCols, $iRow, $iCol){
         if ( $visibleBoard[$iRow][$iCol] == 0  ){
-            for($iR = max(0, $iRow-1) ; $iR <= min($iRows, $iRow + 1); $iR++ ){
-                for($iC = max(0, $iCol-1) ; $iC <= min($iCols, $iCol + 1); $iC++ ){
+            $visibleBoard[$iRow][$iCol] = ($visibleBoard[$iRow][$iCol] == 0 ? 1 : $visibleBoard[$iRow][$iCol]);
+            for($iR = max(0, $iRow-1) ; $iR <= min($iRows-1, $iRow + 1); $iR++ ){
+                for($iC = max(0, $iCol-1) ; $iC <= min($iCols-1, $iCol + 1); $iC++ ){
                     if($mainBoard[$iR][$iC] != 9 ){
-                        $this->uncoverCells($mainBoard, $visibleBoard, $iRows, $iCols, $iRow, $iCol);
+                        $this->uncoverCells($mainBoard, $visibleBoard, $iRows, $iCols, $iR, $iC);
                     }
                 }
             }
