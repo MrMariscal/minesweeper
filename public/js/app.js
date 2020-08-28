@@ -1947,6 +1947,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'minesweeper',
   data: function data() {
@@ -1954,6 +1965,7 @@ __webpack_require__.r(__webpack_exports__);
       setup: false,
       mainBoard: null,
       visibleBoard: null,
+      boardHtml: '',
       parameters: {
         rows: 10,
         cols: 10,
@@ -1968,9 +1980,49 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/api/start', this.parameters).then(function (response) {
         _this.mainBoard = response.data.main;
         _this.visibleBoard = response.data.visible;
+
+        _this.showBoard();
       });
     },
-    showBoard: function showBoard() {}
+    showBoard: function showBoard() {
+      var html = '';
+
+      for (var r = 0; r < this.parameters.rows; r++) {
+        console.log(r);
+        console.log(html);
+        html = '<div class="row">';
+
+        for (var c = 0; c < this.parameters.cols; c++) {
+          var _char = '';
+
+          switch (this.visibleBoard[r][c] == 0) {
+            case 0:
+              _char += '&nbsp';
+              break;
+
+            case 1:
+              if (this.mainBoard[r][c] == 9) {
+                _char += '<i class="fas fa-bomb"></i>';
+              } else {
+                _char += this.mainBoard[r][c];
+              }
+
+              break;
+
+            default:
+              _char += '&nbsp';
+              break;
+          }
+
+          html += '<div class="col">';
+          html += '<a href="#" class="btn btn-success" @click.prevent="">' + _char + '</a>';
+          html += '</div>';
+        }
+
+        html += '</div>';
+        this.boardHtml = html;
+      }
+    }
   }
 });
 
@@ -37558,112 +37610,138 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card", attrs: { id: "setup" } }, [
-    _c("div", { staticClass: "card-body" }, [
-      _c("h1", [_vm._v("Minesweeper")]),
-      _vm._v("\n        Setup Game\n        "),
-      _c("div", { attrs: { id: "setup" } }, [
-        _c("form", { attrs: { action: "" } }, [
-          _c("div", { staticClass: "input-group col-sm-12" }, [
-            _vm._m(0),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-sm-9" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.parameters.rows,
-                    expression: "parameters.rows"
-                  }
-                ],
-                attrs: { name: "rows", id: "rows", type: "number" },
-                domProps: { value: _vm.parameters.rows },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+  return _c("div", { attrs: { id: "container" } }, [
+    _c("div", { staticClass: "card", attrs: { id: "setup" } }, [
+      _c("div", { staticClass: "card-body" }, [
+        _c("h1", [_vm._v("Minesweeper")]),
+        _vm._v("\n            Setup Game\n            "),
+        _c("div", { attrs: { id: "setup" } }, [
+          _c("form", { attrs: { action: "" } }, [
+            _c("div", { staticClass: "input-group col-sm-12" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-sm-9" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.parameters.rows,
+                      expression: "parameters.rows"
                     }
-                    _vm.$set(_vm.parameters, "rows", $event.target.value)
-                  }
-                }
-              })
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "input-group col-sm-12" }, [
-            _vm._m(1),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-sm-9" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.parameters.cols,
-                    expression: "parameters.cols"
-                  }
-                ],
-                attrs: { name: "cols", id: "cols", type: "number" },
-                domProps: { value: _vm.parameters.cols },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+                  ],
+                  attrs: { name: "rows", id: "rows", type: "number" },
+                  domProps: { value: _vm.parameters.rows },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.parameters, "rows", $event.target.value)
                     }
-                    _vm.$set(_vm.parameters, "cols", $event.target.value)
                   }
-                }
-              })
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "input-group col-sm-12" }, [
-            _vm._m(2),
+                })
+              ])
+            ]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-sm-9" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.parameters.mines,
-                    expression: "parameters.mines"
-                  }
-                ],
-                attrs: { name: "mines", id: "mines", type: "number" },
-                domProps: { value: _vm.parameters.mines },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+            _c("div", { staticClass: "input-group col-sm-12" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-sm-9" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.parameters.cols,
+                      expression: "parameters.cols"
                     }
-                    _vm.$set(_vm.parameters, "mines", $event.target.value)
+                  ],
+                  attrs: { name: "cols", id: "cols", type: "number" },
+                  domProps: { value: _vm.parameters.cols },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.parameters, "cols", $event.target.value)
+                    }
                   }
-                }
-              })
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "input-group col-sm-12" }, [
+              _vm._m(2),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-sm-9" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.parameters.mines,
+                      expression: "parameters.mines"
+                    }
+                  ],
+                  attrs: { name: "mines", id: "mines", type: "number" },
+                  domProps: { value: _vm.parameters.mines },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.parameters, "mines", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "input-group-col-sm-12 text-right" }, [
+              _c(
+                "a",
+                {
+                  staticClass: "btn btn-info",
+                  attrs: { href: "#" },
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      return _vm.createNewBoard($event)
+                    }
+                  }
+                },
+                [_vm._v("Create Board")]
+              )
             ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "input-group-col-sm-12 text-right" }, [
-            _c(
-              "a",
-              {
-                staticClass: "btn btn-info",
-                attrs: { href: "#" },
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.createNewBoard($event)
-                  }
-                }
-              },
-              [_vm._v("Create Board")]
-            )
           ])
         ])
       ])
-    ])
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "card", attrs: { id: "board" } },
+      _vm._l(_vm.mainBoard, function(row, rIndex) {
+        return _c("div", { staticClass: "card-body" }, [
+          _c(
+            "div",
+            { staticClass: "row" },
+            _vm._l(row, function(col, cIndex) {
+              return _c("div", { staticClass: "col" }, [
+                _c(
+                  "a",
+                  { staticClass: "btn btn-success", attrs: { href: "#" } },
+                  [_vm._v(_vm._s(rIndex) + "," + _vm._s(cIndex))]
+                )
+              ])
+            }),
+            0
+          )
+        ])
+      }),
+      0
+    )
   ])
 }
 var staticRenderFns = [
