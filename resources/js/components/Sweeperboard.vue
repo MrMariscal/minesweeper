@@ -1,7 +1,20 @@
 <template>
     <div id="board" class="card">
-        <div class="card-title text-center" v-if="winner==1"><h1> You Win</h1></div>
-        <div class="card-title text-center text-danger" v-if="looser==1"><h1>You Loose</h1></div>
+        <div class="card-title text-center" v-if="errSaving">
+            <h1> You can not save and ended game</h1>
+            <h2>{{seconds}}</h2>
+        </div>
+        <div class="card-title text-center" v-else-if="winner==1">
+            <h1> You Win</h1>
+            <h2>{{seconds}}</h2>
+        </div>
+        <div class="card-title text-center text-danger" v-else-if="looser==1">
+            <h1>You Loose</h1>
+            <h2>{{seconds}}</h2>
+        </div>
+        <div class="card-title text-center text-danger" v-else>
+             <h2>{{seconds}}</h2>
+       </div>
         <div class="card-body" v-for="(row, rIndex) in mBoard" v-bind:key="rIndex">
             <div class="row" :key="count">
                 <div class="col" v-for="(col, cIndex) in row" v-bind:key="cIndex">
@@ -18,7 +31,13 @@
                 </div>
             </div>
         </div>
-    </div>    
+        <div class="card">
+            <div class="card-body">
+                <a href="/games" class="btn btn-info">Start a New Game</a>
+                <a href="#" class="btn btn-info" v-if="winner != 1 && looser != 1" @click.prevent="save">Save & pause this game</a>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -31,17 +50,22 @@ export default {
             vBoard: null,
             winner: 0,
             looser: 0,
-            count: 0
+            count: 0,
+            seconds: 0,
+            errSaving: false,
         }
     },
     created: function(){
-
         this.mBoard = this.mainBoard;
         this.vBoard = this.visibleBoard;
+    },
+    mounted(){
+        this.secondsUpdater();
     },
     methods:{ 
         clickCell(row , col){
             if (this.mBoard[row][col] == '9'){
+                clearInterval(this.interval);
                 this.looser = 1;
             }
             else {
@@ -52,16 +76,20 @@ export default {
                     cols: this.cols,
                     row: row,
                     col: col,
+                    timer: 0,
+                    interval: 0
                 };
                 axios.post('/api/click', parameters).then(response=>{
                     this.mBoard = response.data.main;
                     this.vBoard = response.data.visible;
                     if(response.data.uncovers == (this.rows*this.cols)){
+                        clearInterval(this.interval);
                         this.winner = 1;
                     };
                 });
             }
         },
+
         toggle(brow, bcol){
             if (this.vBoard[brow][bcol] != 1){
                 switch(this.vBoard[brow][bcol]){
@@ -80,6 +108,30 @@ export default {
                 }
             }
             this.count++;
+        },
+
+        secondsUpdater(){
+            this.interval = setInterval(()=>{
+                this.seconds++;
+            },1000);
+        },
+
+        save(){
+            if (this.winner == 1 || this.looser == 1){
+                this.errSaving = true;
+            }
+            else {
+                let name = prompt('Name your game', 'Game -  ');
+                if (name != null ){
+                    let game = {
+                        name: name,
+                        mainBoard: this.mBoard,
+                        visibleBoard: this.vBoard,                
+                    }
+                    axios.post('/save', game);
+                    window.location ='/games';            
+                }
+            }
         }
     }
 }

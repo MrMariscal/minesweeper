@@ -1,6 +1,6 @@
 <template>
     <div id="container">
-        <div id="setup" class="card">
+        <div id="setup" class="card" v-if="showSetup">
             <div class="card-body">
                 <h1>Minesweeper</h1>
                 Setup Game
@@ -53,6 +53,7 @@ export default {
             mainBoard: null,
             visibleBoard: null,
             showBoard: false,
+            showSetup: true,
             boardHtml: '',
             parameters: {
                 rows: 10,
@@ -65,15 +66,14 @@ export default {
         createNewBoard(){
             axios.post('/api/start', this.parameters).then(
                 response=>{
+                    this.showBoard = false;
                     this.mainBoard = response.data.main;
                     this.visibleBoard = response.data.visible;
                     this.showBoard = true;
+                    this.showSetup = false;
                 }
                 );
         },
-        clickCell(x,y){
-            alert(x + ',' + y);
-        }
     }
 }
 </script>    

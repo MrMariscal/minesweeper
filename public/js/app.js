@@ -1962,6 +1962,7 @@ __webpack_require__.r(__webpack_exports__);
       mainBoard: null,
       visibleBoard: null,
       showBoard: false,
+      showSetup: true,
       boardHtml: '',
       parameters: {
         rows: 10,
@@ -1975,13 +1976,12 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.post('/api/start', this.parameters).then(function (response) {
+        _this.showBoard = false;
         _this.mainBoard = response.data.main;
         _this.visibleBoard = response.data.visible;
         _this.showBoard = true;
+        _this.showSetup = false;
       });
-    },
-    clickCell: function clickCell(x, y) {
-      alert(x + ',' + y);
     }
   }
 });
@@ -2020,6 +2020,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Sweeperboard',
   props: ['mainBoard', 'visibleBoard', 'rows', 'cols'],
@@ -2029,18 +2048,24 @@ __webpack_require__.r(__webpack_exports__);
       vBoard: null,
       winner: 0,
       looser: 0,
-      count: 0
+      count: 0,
+      seconds: 0,
+      errSaving: false
     };
   },
   created: function created() {
     this.mBoard = this.mainBoard;
     this.vBoard = this.visibleBoard;
   },
+  mounted: function mounted() {
+    this.secondsUpdater();
+  },
   methods: {
     clickCell: function clickCell(row, col) {
       var _this = this;
 
       if (this.mBoard[row][col] == '9') {
+        clearInterval(this.interval);
         this.looser = 1;
       } else {
         var parameters = {
@@ -2049,13 +2074,16 @@ __webpack_require__.r(__webpack_exports__);
           rows: this.rows,
           cols: this.cols,
           row: row,
-          col: col
+          col: col,
+          timer: 0,
+          interval: 0
         };
         axios.post('/api/click', parameters).then(function (response) {
           _this.mBoard = response.data.main;
           _this.vBoard = response.data.visible;
 
           if (response.data.uncovers == _this.rows * _this.cols) {
+            clearInterval(_this.interval);
             _this.winner = 1;
           }
 
@@ -2084,6 +2112,30 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.count++;
+    },
+    secondsUpdater: function secondsUpdater() {
+      var _this2 = this;
+
+      this.interval = setInterval(function () {
+        _this2.seconds++;
+      }, 1000);
+    },
+    save: function save() {
+      if (this.winner == 1 || this.looser == 1) {
+        this.errSaving = true;
+      } else {
+        var name = prompt('Name your game', 'Game -  ');
+
+        if (name != null) {
+          var game = {
+            name: name,
+            mainBoard: this.mBoard,
+            visibleBoard: this.vBoard
+          };
+          axios.post('/save', game);
+          window.location = '/games';
+        }
+      }
     }
   }
 });
@@ -37673,113 +37725,115 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { attrs: { id: "container" } }, [
-    _c("div", { staticClass: "card", attrs: { id: "setup" } }, [
-      _c("div", { staticClass: "card-body" }, [
-        _c("h1", [_vm._v("Minesweeper")]),
-        _vm._v("\n            Setup Game\n            "),
-        _c("div", { attrs: { id: "setup" } }, [
-          _c("form", { attrs: { action: "" } }, [
-            _c("div", { staticClass: "input-group col-sm-12" }, [
-              _vm._m(0),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-sm-9" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.parameters.rows,
-                      expression: "parameters.rows"
-                    }
-                  ],
-                  attrs: { name: "rows", id: "rows", type: "number" },
-                  domProps: { value: _vm.parameters.rows },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+    _vm.showSetup
+      ? _c("div", { staticClass: "card", attrs: { id: "setup" } }, [
+          _c("div", { staticClass: "card-body" }, [
+            _c("h1", [_vm._v("Minesweeper")]),
+            _vm._v("\n            Setup Game\n            "),
+            _c("div", { attrs: { id: "setup" } }, [
+              _c("form", { attrs: { action: "" } }, [
+                _c("div", { staticClass: "input-group col-sm-12" }, [
+                  _vm._m(0),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-9" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.parameters.rows,
+                          expression: "parameters.rows"
+                        }
+                      ],
+                      attrs: { name: "rows", id: "rows", type: "number" },
+                      domProps: { value: _vm.parameters.rows },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.parameters, "rows", $event.target.value)
+                        }
                       }
-                      _vm.$set(_vm.parameters, "rows", $event.target.value)
-                    }
-                  }
-                })
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "input-group col-sm-12" }, [
-              _vm._m(1),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-sm-9" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.parameters.cols,
-                      expression: "parameters.cols"
-                    }
-                  ],
-                  attrs: { name: "cols", id: "cols", type: "number" },
-                  domProps: { value: _vm.parameters.cols },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "input-group col-sm-12" }, [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-9" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.parameters.cols,
+                          expression: "parameters.cols"
+                        }
+                      ],
+                      attrs: { name: "cols", id: "cols", type: "number" },
+                      domProps: { value: _vm.parameters.cols },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.parameters, "cols", $event.target.value)
+                        }
                       }
-                      _vm.$set(_vm.parameters, "cols", $event.target.value)
-                    }
-                  }
-                })
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "input-group col-sm-12" }, [
-              _vm._m(2),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-sm-9" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.parameters.mines,
-                      expression: "parameters.mines"
-                    }
-                  ],
-                  attrs: { name: "mines", id: "mines", type: "number" },
-                  domProps: { value: _vm.parameters.mines },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "input-group col-sm-12" }, [
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-9" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.parameters.mines,
+                          expression: "parameters.mines"
+                        }
+                      ],
+                      attrs: { name: "mines", id: "mines", type: "number" },
+                      domProps: { value: _vm.parameters.mines },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.parameters, "mines", $event.target.value)
+                        }
                       }
-                      _vm.$set(_vm.parameters, "mines", $event.target.value)
-                    }
-                  }
-                })
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "input-group-col-sm-12 text-right" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "btn btn-info",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.createNewBoard($event)
+                        }
+                      }
+                    },
+                    [_vm._v("Create Board")]
+                  )
+                ])
               ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "input-group-col-sm-12 text-right" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-info",
-                  attrs: { href: "#" },
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      return _vm.createNewBoard($event)
-                    }
-                  }
-                },
-                [_vm._v("Create Board")]
-              )
             ])
           ])
         ])
-      ])
-    ]),
+      : _vm._e(),
     _vm._v(" "),
     _vm.showBoard
       ? _c("div", { staticClass: "card" }, [
@@ -37853,17 +37907,27 @@ var render = function() {
     "div",
     { staticClass: "card", attrs: { id: "board" } },
     [
-      _vm.winner == 1
+      _vm.errSaving
         ? _c("div", { staticClass: "card-title text-center" }, [
-            _c("h1", [_vm._v(" You Win")])
+            _c("h1", [_vm._v(" You can not save and ended game")]),
+            _vm._v(" "),
+            _c("h2", [_vm._v(_vm._s(_vm.seconds))])
           ])
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.looser == 1
+        : _vm.winner == 1
+        ? _c("div", { staticClass: "card-title text-center" }, [
+            _c("h1", [_vm._v(" You Win")]),
+            _vm._v(" "),
+            _c("h2", [_vm._v(_vm._s(_vm.seconds))])
+          ])
+        : _vm.looser == 1
         ? _c("div", { staticClass: "card-title text-center text-danger" }, [
-            _c("h1", [_vm._v("You Loose")])
+            _c("h1", [_vm._v("You Loose")]),
+            _vm._v(" "),
+            _c("h2", [_vm._v(_vm._s(_vm.seconds))])
           ])
-        : _vm._e(),
+        : _c("div", { staticClass: "card-title text-center text-danger" }, [
+            _c("h2", [_vm._v(_vm._s(_vm.seconds))])
+          ]),
       _vm._v(" "),
       _vm._l(_vm.mBoard, function(row, rIndex) {
         return _c("div", { key: rIndex, staticClass: "card-body" }, [
@@ -37960,7 +38024,32 @@ var render = function() {
             0
           )
         ])
-      })
+      }),
+      _vm._v(" "),
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("a", { staticClass: "btn btn-info", attrs: { href: "/games" } }, [
+            _vm._v("Start a New Game")
+          ]),
+          _vm._v(" "),
+          _vm.winner != 1 && _vm.looser != 1
+            ? _c(
+                "a",
+                {
+                  staticClass: "btn btn-info",
+                  attrs: { href: "#" },
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      return _vm.save($event)
+                    }
+                  }
+                },
+                [_vm._v("Save & pause this game")]
+              )
+            : _vm._e()
+        ])
+      ])
     ],
     2
   )

@@ -26,7 +26,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Minesweeper</h5>
-                        Sidebar options.
+                        @yield('sidebar')
                     </div>
                 </div>
             </nav>

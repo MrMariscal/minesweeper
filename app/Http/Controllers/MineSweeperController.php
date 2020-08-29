@@ -130,4 +130,8 @@ class MineSweeperController extends Controller
         }
         return $iBombs;
     }
+
+    public function saveGame(Request $request){
+        dd($request);
+    }
 }

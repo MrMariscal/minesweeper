@@ -20,3 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/start','MineSweeperController@initializeBoard');
 Route::post('/click','MineSweeperController@clickCell');
+Route::post('/save','MineSweeperController@saveGame');
