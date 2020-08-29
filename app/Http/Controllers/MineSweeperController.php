@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Auth;
+use App\Game;
 class MineSweeperController extends Controller
 {
     public function index(){
@@ -133,6 +134,14 @@ class MineSweeperController extends Controller
     }
 
     public function saveGame(Request $request){
-        dd($request);
+        $game = new Game;
+        $game->user_id = $request->userid;
+        $game->game = $request->gamename;
+        $game->seconds = $request->seconds;
+        $game->main = $request->mainBoard;
+        $game->visible = $request->visibleBoard;
+        $game->save();
+
+        dd($game);
     }
 }
