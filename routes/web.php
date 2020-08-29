@@ -25,3 +25,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/games', 'MineSweeperController@index')->middleware('auth');
+Route::get('/games/{id}', 'MineSweeperController@index')->middleware('auth');

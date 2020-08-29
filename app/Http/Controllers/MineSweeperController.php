@@ -8,9 +8,22 @@ use Auth;
 use App\Game;
 class MineSweeperController extends Controller
 {
-    public function index(){
+    public function index($id = 0){
         $user = Auth::user();
-        return view('minesweeper.index', ['userid'=>$user->id, 'username'=>$user->name]);
+        if ($id > 0 ){
+            $game = Game::find($id);
+            $values = array();
+            if ($game){
+                $values['seconds'] = $game->seconds;
+                $values['main'] = $game->main;
+                $values['visible'] = $game->visible;
+
+            }
+            return view('minesweeper.index', ['userid'=>$user->id, 'username'=>$user->name, 'game'=>$values]);
+        }
+        else {
+            return view('minesweeper.index', ['userid'=>$user->id, 'username'=>$user->name, 'game'=>array()]);
+        }
     }
 
     public function initializeBoard(Request $request){
@@ -141,7 +154,10 @@ class MineSweeperController extends Controller
         $game->main = $request->mainBoard;
         $game->visible = $request->visibleBoard;
         $game->save();
+    }
 
-        dd($game);
+    public function getGames(Request $request){
+        //return $request;
+        return Game::find($request->userid)->all();
     }
 }

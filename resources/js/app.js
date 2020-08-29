@@ -21,6 +21,7 @@ window.Vue = require('vue');
 
 Vue.component('Minesweeper', require('./components/Minesweeper.vue').default);
 Vue.component('Sweeperboard', require('./components/Sweeperboard.vue').default);
+Vue.component('Gameslist', require('./components/Gameslist.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

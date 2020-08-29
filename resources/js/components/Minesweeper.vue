@@ -39,7 +39,7 @@
         </div>
         <div class="card" v-if="showBoard">
             <div class="card-body">
-                <Sweeperboard :userid="userid" :mainBoard="mainBoard" :visibleBoard="visibleBoard" :rows="parameters.rows" :cols="parameters.cols"></Sweeperboard>
+                <Sweeperboard :userid="userid" :mainBoard="mainBoard" :visibleBoard="visibleBoard" :rows="parameters.rows" :cols="parameters.cols" :seconds="seconds"></Sweeperboard>
             </div>
         </div>
     </div>
@@ -47,7 +47,7 @@
 <script>
 export default {
     name: 'minesweeper',
-    props:['userid'],
+    props:['userid', 'game'],
     data() {
         return{
             setup: false, 
@@ -55,7 +55,9 @@ export default {
             visibleBoard: null,
             showBoard: false,
             showSetup: true,
+            jGame: null,
             boardHtml: '',
+            seconds: 0,
             parameters: {
                 rows: 10,
                 cols: 10,
@@ -63,17 +65,30 @@ export default {
             },
         }
     },
+    mounted(){
+        if ( Object.keys(this.game).length > 2 ){
+            this.jGame = JSON.parse(this.game);
+            this.mainBoard = this.jGame.main;
+            this.visibleBoard = this.jGame.visible;
+            this.seconds = this.jGame.seconds;
+            this.recreateNewBoard();
+        }
+    },
     methods: {
         createNewBoard(){
             axios.post('/api/start', this.parameters).then(
                 response=>{
-                    this.showBoard = false;
                     this.mainBoard = response.data.main;
                     this.visibleBoard = response.data.visible;
                     this.showBoard = true;
                     this.showSetup = false;
+                    this.seconds = 0;
                 }
                 );
+        },
+        recreateNewBoard(){
+            this.showBoard = true;
+            this.showSetup = false;
         },
     }
 }

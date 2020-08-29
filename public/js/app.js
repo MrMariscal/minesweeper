@@ -1899,6 +1899,51 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Gameslist.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Gameslist.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'gameslist',
+  props: ['userid'],
+  data: function data() {
+    return {
+      games: null
+    };
+  },
+  mounted: function mounted() {
+    this.getGames();
+  },
+  methods: {
+    getGames: function getGames() {
+      var _this = this;
+
+      axios.post('/api/userGames', {
+        userid: this.userid
+      }).then( //axios.post('/api/userGames', {userid: 1}).then(
+      function (response) {
+        _this.games = response.data;
+      });
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Minesweeper.vue?vue&type=script&lang=js&":
 /*!**********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Minesweeper.vue?vue&type=script&lang=js& ***!
@@ -1956,7 +2001,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'minesweeper',
-  props: ['userid'],
+  props: ['userid', 'game'],
   data: function data() {
     return {
       setup: false,
@@ -1964,7 +2009,9 @@ __webpack_require__.r(__webpack_exports__);
       visibleBoard: null,
       showBoard: false,
       showSetup: true,
+      jGame: null,
       boardHtml: '',
+      seconds: 0,
       parameters: {
         rows: 10,
         cols: 10,
@@ -1972,17 +2019,30 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
+  mounted: function mounted() {
+    if (Object.keys(this.game).length > 2) {
+      this.jGame = JSON.parse(this.game);
+      this.mainBoard = this.jGame.main;
+      this.visibleBoard = this.jGame.visible;
+      this.seconds = this.jGame.seconds;
+      this.recreateNewBoard();
+    }
+  },
   methods: {
     createNewBoard: function createNewBoard() {
       var _this = this;
 
       axios.post('/api/start', this.parameters).then(function (response) {
-        _this.showBoard = false;
         _this.mainBoard = response.data.main;
         _this.visibleBoard = response.data.visible;
         _this.showBoard = true;
         _this.showSetup = false;
+        _this.seconds = 0;
       });
+    },
+    recreateNewBoard: function recreateNewBoard() {
+      this.showBoard = true;
+      this.showSetup = false;
     }
   }
 });
@@ -2042,7 +2102,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Sweeperboard',
-  props: ['userid', 'mainBoard', 'visibleBoard', 'rows', 'cols'],
+  props: ['userid', 'mainBoard', 'visibleBoard', 'rows', 'cols', 'seconds'],
   data: function data() {
     return {
       mBoard: null,
@@ -2050,13 +2110,14 @@ __webpack_require__.r(__webpack_exports__);
       winner: 0,
       looser: 0,
       count: 0,
-      seconds: 0,
+      sSeconds: 0,
       errSaving: false
     };
   },
   created: function created() {
     this.mBoard = this.mainBoard;
     this.vBoard = this.visibleBoard;
+    this.sSeconds = this.seconds;
   },
   mounted: function mounted() {
     this.secondsUpdater();
@@ -2118,7 +2179,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.interval = setInterval(function () {
-        _this2.seconds++;
+        _this2.sSeconds++;
       }, 1000);
     },
     save: function save() {
@@ -2126,13 +2187,12 @@ __webpack_require__.r(__webpack_exports__);
         this.errSaving = true;
       } else {
         var name = prompt('Name your game', 'Game -  ');
-        console.log();
 
         if (name != null) {
           var game = {
             userid: this.userid,
             gamename: name,
-            seconds: this.seconds,
+            seconds: this.sSeconds,
             mainBoard: this.mBoard,
             visibleBoard: this.vBoard
           };
@@ -37712,6 +37772,48 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Gameslist.vue?vue&type=template&id=7fe284f8&":
+/*!************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Gameslist.vue?vue&type=template&id=7fe284f8& ***!
+  \************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { attrs: { id: "container" } }, [
+    _c(
+      "ul",
+      { staticClass: "list-unstyled", attrs: { id: "games" } },
+      _vm._l(_vm.games, function(game) {
+        return _c("li", { key: game.id }, [
+          _c(
+            "a",
+            {
+              staticClass: "btn btn-info col-sm-12",
+              attrs: { href: "/games/" + game.id }
+            },
+            [_vm._v(_vm._s(game.game))]
+          )
+        ])
+      }),
+      0
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Minesweeper.vue?vue&type=template&id=199a30cb&":
 /*!**************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Minesweeper.vue?vue&type=template&id=199a30cb& ***!
@@ -37850,7 +37952,8 @@ var render = function() {
                   mainBoard: _vm.mainBoard,
                   visibleBoard: _vm.visibleBoard,
                   rows: _vm.parameters.rows,
-                  cols: _vm.parameters.cols
+                  cols: _vm.parameters.cols,
+                  seconds: _vm.seconds
                 }
               })
             ],
@@ -37915,22 +38018,22 @@ var render = function() {
         ? _c("div", { staticClass: "card-title text-center" }, [
             _c("h1", [_vm._v(" You can not save and ended game")]),
             _vm._v(" "),
-            _c("h2", [_vm._v(_vm._s(_vm.seconds))])
+            _c("h2", [_vm._v(_vm._s(_vm.sSeconds))])
           ])
         : _vm.winner == 1
         ? _c("div", { staticClass: "card-title text-center" }, [
             _c("h1", [_vm._v(" You Win")]),
             _vm._v(" "),
-            _c("h2", [_vm._v(_vm._s(_vm.seconds))])
+            _c("h2", [_vm._v(_vm._s(_vm.sSeconds))])
           ])
         : _vm.looser == 1
         ? _c("div", { staticClass: "card-title text-center text-danger" }, [
             _c("h1", [_vm._v("You Loose")]),
             _vm._v(" "),
-            _c("h2", [_vm._v(_vm._s(_vm.seconds))])
+            _c("h2", [_vm._v(_vm._s(_vm.sSeconds))])
           ])
         : _c("div", { staticClass: "card-title text-center text-danger" }, [
-            _c("h2", [_vm._v(_vm._s(_vm.seconds))])
+            _c("h2", [_vm._v(_vm._s(_vm.sSeconds))])
           ]),
       _vm._v(" "),
       _vm._l(_vm.mBoard, function(row, rIndex) {
@@ -50254,6 +50357,7 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 Vue.component('Minesweeper', __webpack_require__(/*! ./components/Minesweeper.vue */ "./resources/js/components/Minesweeper.vue")["default"]);
 Vue.component('Sweeperboard', __webpack_require__(/*! ./components/Sweeperboard.vue */ "./resources/js/components/Sweeperboard.vue")["default"]);
+Vue.component('Gameslist', __webpack_require__(/*! ./components/Gameslist.vue */ "./resources/js/components/Gameslist.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -50308,6 +50412,75 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/Gameslist.vue":
+/*!***********************************************!*\
+  !*** ./resources/js/components/Gameslist.vue ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Gameslist_vue_vue_type_template_id_7fe284f8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Gameslist.vue?vue&type=template&id=7fe284f8& */ "./resources/js/components/Gameslist.vue?vue&type=template&id=7fe284f8&");
+/* harmony import */ var _Gameslist_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Gameslist.vue?vue&type=script&lang=js& */ "./resources/js/components/Gameslist.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Gameslist_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Gameslist_vue_vue_type_template_id_7fe284f8___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Gameslist_vue_vue_type_template_id_7fe284f8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Gameslist.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Gameslist.vue?vue&type=script&lang=js&":
+/*!************************************************************************!*\
+  !*** ./resources/js/components/Gameslist.vue?vue&type=script&lang=js& ***!
+  \************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Gameslist_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Gameslist.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Gameslist.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Gameslist_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Gameslist.vue?vue&type=template&id=7fe284f8&":
+/*!******************************************************************************!*\
+  !*** ./resources/js/components/Gameslist.vue?vue&type=template&id=7fe284f8& ***!
+  \******************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Gameslist_vue_vue_type_template_id_7fe284f8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Gameslist.vue?vue&type=template&id=7fe284f8& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Gameslist.vue?vue&type=template&id=7fe284f8&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Gameslist_vue_vue_type_template_id_7fe284f8___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Gameslist_vue_vue_type_template_id_7fe284f8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 

@@ -2,18 +2,18 @@
     <div id="board" class="card">
         <div class="card-title text-center" v-if="errSaving">
             <h1> You can not save and ended game</h1>
-            <h2>{{seconds}}</h2>
+            <h2>{{sSeconds}}</h2>
         </div>
         <div class="card-title text-center" v-else-if="winner==1">
             <h1> You Win</h1>
-            <h2>{{seconds}}</h2>
+            <h2>{{sSeconds}}</h2>
         </div>
         <div class="card-title text-center text-danger" v-else-if="looser==1">
             <h1>You Loose</h1>
-            <h2>{{seconds}}</h2>
+            <h2>{{sSeconds}}</h2>
         </div>
         <div class="card-title text-center text-danger" v-else>
-             <h2>{{seconds}}</h2>
+             <h2>{{sSeconds}}</h2>
        </div>
         <div class="card-body" v-for="(row, rIndex) in mBoard" v-bind:key="rIndex">
             <div class="row" :key="count">
@@ -43,7 +43,7 @@
 <script>
 export default {
     name: 'Sweeperboard',
-    props:['userid', 'mainBoard', 'visibleBoard', 'rows', 'cols'],
+    props:['userid', 'mainBoard', 'visibleBoard', 'rows', 'cols', 'seconds'],
     data(){
         return {
             mBoard: null,
@@ -51,13 +51,14 @@ export default {
             winner: 0,
             looser: 0,
             count: 0,
-            seconds: 0,
+            sSeconds: 0,
             errSaving: false,
         }
     },
     created: function(){
         this.mBoard = this.mainBoard;
         this.vBoard = this.visibleBoard;
+        this.sSeconds = this.seconds;
     },
     mounted(){
         this.secondsUpdater();
@@ -112,7 +113,7 @@ export default {
 
         secondsUpdater(){
             this.interval = setInterval(()=>{
-                this.seconds++;
+                this.sSeconds++;
             },1000);
         },
 
@@ -122,12 +123,11 @@ export default {
             }
             else {
                 let name = prompt('Name your game', 'Game -  ');
-                console.log()
                 if (name != null ){
                     let game = {                        
                         userid: this.userid,
                         gamename: name,
-                        seconds: this.seconds,
+                        seconds: this.sSeconds,
                         mainBoard: this.mBoard,
                         visibleBoard: this.vBoard,                
                     }
