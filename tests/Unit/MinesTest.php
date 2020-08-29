@@ -21,6 +21,8 @@ class MinesTest extends TestCase
     public function testGetUserGames(){
         $response = $this->post('/api/userGames/', array('userid'=>1));
         $response->assertStatus(200);
+        //We test we are reciving at least one valid record, we need to have saved games for this
+        //and userid must be a valid user
         $response->assertJsonStructure(['0']);   
     }
 }
