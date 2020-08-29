@@ -147,13 +147,15 @@ class MineSweeperController extends Controller
     }
 
     public function saveGame(Request $request){
-        $game = new Game;
-        $game->user_id = $request->userid;
-        $game->game = $request->gamename;
-        $game->seconds = $request->seconds;
-        $game->main = $request->mainBoard;
-        $game->visible = $request->visibleBoard;
-        $game->save();
+        if(isset($request->userid)){
+            $game = new Game;
+            $game->user_id = $request->userid;
+            $game->game = $request->gamename;
+            $game->seconds = $request->seconds;
+            $game->main = $request->mainBoard;
+            $game->visible = $request->visibleBoard;
+            $game->save();
+        }
     }
 
     public function getGames(Request $request){
