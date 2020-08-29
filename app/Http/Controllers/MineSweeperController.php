@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
+use Auth;
 class MineSweeperController extends Controller
 {
     public function index(){
-        return view('minesweeper.index');
+        $user = Auth::user();
+        return view('minesweeper.index', ['userid'=>$user->id, 'username'=>$user->name]);
     }
 
     public function initializeBoard(Request $request){

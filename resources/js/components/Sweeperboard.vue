@@ -43,7 +43,7 @@
 <script>
 export default {
     name: 'Sweeperboard',
-    props:['mainBoard', 'visibleBoard', 'rows', 'cols'],
+    props:['userid', 'mainBoard', 'visibleBoard', 'rows', 'cols'],
     data(){
         return {
             mBoard: null,
@@ -122,14 +122,17 @@ export default {
             }
             else {
                 let name = prompt('Name your game', 'Game -  ');
+                console.log()
                 if (name != null ){
-                    let game = {
-                        name: name,
+                    let game = {                        
+                        userid: this.userid,
+                        gamename: name,
+                        seconds: this.seconds,
                         mainBoard: this.mBoard,
                         visibleBoard: this.vBoard,                
                     }
-                    axios.post('/save', game);
-                    window.location ='/games';            
+                    axios.post('/api/save', game);
+                    //window.location ='/games';            
                 }
             }
         }

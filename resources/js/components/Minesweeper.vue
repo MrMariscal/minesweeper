@@ -39,7 +39,7 @@
         </div>
         <div class="card" v-if="showBoard">
             <div class="card-body">
-                <Sweeperboard :mainBoard="mainBoard" :visibleBoard="visibleBoard" :rows="parameters.rows" :cols="parameters.cols"></Sweeperboard>
+                <Sweeperboard :userid="userid" :mainBoard="mainBoard" :visibleBoard="visibleBoard" :rows="parameters.rows" :cols="parameters.cols"></Sweeperboard>
             </div>
         </div>
     </div>
@@ -47,6 +47,7 @@
 <script>
 export default {
     name: 'minesweeper',
+    props:['userid'],
     data() {
         return{
             setup: false, 

@@ -1,4 +1,5 @@
 @extends('layouts.minesweeper')
 @section('content')
-    <minesweeper></minesweeper>
+    <h1>{{$username}}</h1>
+    <minesweeper userid="{{$userid}}"></minesweeper>
 @endsection

@@ -1956,6 +1956,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'minesweeper',
+  props: ['userid'],
   data: function data() {
     return {
       setup: false,
@@ -2041,7 +2042,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Sweeperboard',
-  props: ['mainBoard', 'visibleBoard', 'rows', 'cols'],
+  props: ['userid', 'mainBoard', 'visibleBoard', 'rows', 'cols'],
   data: function data() {
     return {
       mBoard: null,
@@ -2125,15 +2126,17 @@ __webpack_require__.r(__webpack_exports__);
         this.errSaving = true;
       } else {
         var name = prompt('Name your game', 'Game -  ');
+        console.log();
 
         if (name != null) {
           var game = {
-            name: name,
+            userid: this.userid,
+            gamename: name,
+            seconds: this.seconds,
             mainBoard: this.mBoard,
             visibleBoard: this.vBoard
           };
-          axios.post('/save', game);
-          window.location = '/games';
+          axios.post('/api/save', game); //window.location ='/games';            
         }
       }
     }
@@ -37843,6 +37846,7 @@ var render = function() {
             [
               _c("Sweeperboard", {
                 attrs: {
+                  userid: _vm.userid,
                   mainBoard: _vm.mainBoard,
                   visibleBoard: _vm.visibleBoard,
                   rows: _vm.parameters.rows,
